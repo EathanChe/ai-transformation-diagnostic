@@ -101,6 +101,22 @@ a:focus-visible {
   letter-spacing: 0.16em;
 }
 
+.header-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 7px;
+  text-align: right;
+}
+
+.company-name {
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+
 .privacy-chip {
   display: inline-flex;
   align-items: center;
@@ -1206,7 +1222,18 @@ a:focus-visible {
   }
 
   .privacy-chip {
-    font-size: 0;
+    display: none;
+  }
+
+  .header-meta {
+    max-width: 128px;
+  }
+
+  .company-name {
+    font-size: 10px;
+    line-height: 1.45;
+    letter-spacing: 0.04em;
+    white-space: normal;
   }
 
   .intro-shell {

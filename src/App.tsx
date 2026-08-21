@@ -226,7 +226,10 @@ export default function App() {
       {screen !== "loading" && screen !== "result" && (
         <header className="site-header">
           <Brand />
-          <span className="privacy-chip"><ShieldCheck size={14} />匿名测评</span>
+          <div className="header-meta">
+            <span className="company-name">杭州亿序科技有限公司</span>
+            <span className="privacy-chip"><ShieldCheck size={14} />匿名测评</span>
+          </div>
         </header>
       )}
 
