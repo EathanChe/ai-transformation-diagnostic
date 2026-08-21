@@ -454,6 +454,14 @@ a:focus-visible {
   line-height: 1;
 }
 
+.question-number-text {
+  top: 49px;
+  font-family: inherit;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
 .question-eyebrow {
   margin: 0 0 18px;
   color: #56705e;

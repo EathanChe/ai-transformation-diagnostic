@@ -8,15 +8,16 @@ import {
 } from "./analyze";
 
 const validBody = {
-  assessmentVersion: "1.0",
+  assessmentVersion: "2.0",
   answers: {
-    orgBurden: "under-50",
-    processCoupling: "independent",
-    urgency: "under-3m",
-    leadership: "top-priority",
-    aiReadiness: "platform-governance",
+    transformationDepth: "strategy-organization",
+    decisionLayers: "one-layer",
+    processCoupling: "zero-systems",
+    urgency: "already-impacted",
+    leadershipInvolvement: "weekly-chair",
+    workflowReadiness: "production-measured",
     executionSpeed: "under-2w",
-    changeTolerance: "rapid-reorg",
+    roleRedesignScope: "company-wide",
   },
   context: "希望快速重构电商流程",
   turnstileToken: "test-token",
@@ -53,7 +54,9 @@ describe("handleAnalyzeRequest", () => {
     expect(response.status).toBe(200);
     expect(body.source).toBe("fallback");
     expect(body.recommendation).toBe("revolution");
-    expect(body.revolutionScore).toBe(100);
+    expect(body.depthScore).toBe(100);
+    expect(body.speedPressureScore).toBe(100);
+    expect(body.capacityScore).toBe(100);
   });
 
   it("returns a validated report from an OpenAI-compatible model", async () => {
@@ -79,7 +82,7 @@ describe("handleAnalyzeRequest", () => {
 
   it("rejects missing required answers", async () => {
     const response = await handleAnalyzeRequest(
-      request({ assessmentVersion: "1.0", answers: {}, turnstileToken: "test" }),
+      request({ assessmentVersion: "2.0", answers: {}, turnstileToken: "test" }),
       {},
     );
     expect(response.status).toBe(400);
@@ -87,7 +90,7 @@ describe("handleAnalyzeRequest", () => {
 
   it("rejects an option id that is not in the server definition", async () => {
     const response = await handleAnalyzeRequest(
-      request({ ...validBody, answers: { ...validBody.answers, leadership: "forged-100" } }),
+      request({ ...validBody, answers: { ...validBody.answers, leadershipInvolvement: "forged-100" } }),
       {},
     );
     expect(response.status).toBe(400);

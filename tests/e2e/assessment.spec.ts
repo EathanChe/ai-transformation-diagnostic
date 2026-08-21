@@ -1,11 +1,12 @@
 import { expect, test } from "@playwright/test";
 
 const mockedResult = {
-  assessmentVersion: "1.0",
+  assessmentVersion: "2.0",
   source: "model",
   recommendation: "revolution",
-  revolutionScore: 88,
-  evolutionScore: 12,
+  depthScore: 88,
+  speedPressureScore: 100,
+  capacityScore: 82,
   confidence: "high",
   boundaryState: false,
   report: {
@@ -30,7 +31,7 @@ test("completes all eight steps and renders the report", async ({ page }) => {
   await page.goto("/");
   await page.getByRole("button", { name: /开始战略诊断/ }).click();
 
-  for (let index = 0; index < 7; index += 1) {
+  for (let index = 0; index < 8; index += 1) {
     await page.getByRole("radio").first().click();
     await page.getByRole("button", { name: /下一题/ }).click();
   }

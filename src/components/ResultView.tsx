@@ -14,6 +14,16 @@ type ResultViewProps = {
 };
 
 const routeCopy = {
+  adaptation: {
+    cn: "适应",
+    en: "ADAPTATION",
+    descriptor: "分阶段完成有限范围的调整",
+  },
+  reconstruction: {
+    cn: "重构",
+    en: "RECONSTRUCTION",
+    descriptor: "在短时间内完成有限范围的调整",
+  },
   evolution: {
     cn: "进化",
     en: "EVOLUTION",
@@ -32,9 +42,9 @@ const confidenceCopy = {
   high: "高置信",
 };
 
-function ScoreBar({ label, score, active }: { label: string; score: number; active: boolean }) {
+function ScoreBar({ label, score }: { label: string; score: number }) {
   return (
-    <div className={`score-row ${active ? "score-row-active" : ""}`}>
+    <div className="score-row score-row-active">
       <div className="score-meta">
         <span>{label}</span>
         <strong>{score}</strong>
@@ -71,7 +81,7 @@ export function ResultView({ result, onRestart }: ResultViewProps) {
         {result.boundaryState && (
           <div className="boundary-note">
             <AlertTriangle size={18} aria-hidden="true" />
-            <span>两条路线的适配度接近。建议通过短周期验证项目校准最终选择。</span>
+            <span>当前判断接近路线阈值。建议通过短周期验证项目校准变革深度或推进速度。</span>
           </div>
         )}
       </header>
@@ -80,22 +90,24 @@ export function ResultView({ result, onRestart }: ResultViewProps) {
         <div className="section-heading">
           <span>01</span>
           <div>
-            <p>路线适配度</p>
-            <h2 id="scores-title">战略速度与组织承载的综合判断</h2>
+            <p>三个判断维度</p>
+            <h2 id="scores-title">深度、压力与承载能力分别计算</h2>
           </div>
         </div>
         <div className="scores-card">
           <ScoreBar
-            label="进化 Evolution"
-            score={result.evolutionScore}
-            active={result.recommendation === "evolution"}
+            label="变革深度"
+            score={result.depthScore}
           />
           <ScoreBar
-            label="革命 Revolution"
-            score={result.revolutionScore}
-            active={result.recommendation === "revolution"}
+            label="速度压力"
+            score={result.speedPressureScore}
           />
-          <p className="score-footnote">分值反映相对适配程度，用于比较两条深层变革路径。</p>
+          <ScoreBar
+            label="组织承载"
+            score={result.capacityScore}
+          />
+          <p className="score-footnote">三个分值相互独立。60 分为深层变革和快速推进的判断阈值。</p>
         </div>
       </section>
 

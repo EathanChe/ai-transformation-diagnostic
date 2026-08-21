@@ -25,7 +25,7 @@ export function StrategyMatrix() {
         </div>
       </div>
       <figcaption id="matrix-caption">
-        Balogun 与 Hope Hailey 的变革类型模型。测评聚焦深层变革中的两条路径。
+        Balogun 与 Hope Hailey 的变革类型模型。测评先判断深度，再结合速度压力与组织承载选择路线。
       </figcaption>
     </figure>
   );

@@ -1,16 +1,20 @@
 import { z } from "zod";
 
 export const questionIds = [
-  "orgBurden",
+  "transformationDepth",
+  "decisionLayers",
   "processCoupling",
   "urgency",
-  "leadership",
-  "aiReadiness",
+  "leadershipInvolvement",
+  "workflowReadiness",
   "executionSpeed",
-  "changeTolerance",
+  "roleRedesignScope",
 ] as const;
 
 export type QuestionId = (typeof questionIds)[number];
+
+export const routeTypes = ["adaptation", "reconstruction", "evolution", "revolution"] as const;
+export type RouteType = (typeof routeTypes)[number];
 
 export const reportSchema = z.object({
   headline: z.string().min(1).max(80),
@@ -32,7 +36,7 @@ export const reportSchema = z.object({
 export type DiagnosticReport = z.infer<typeof reportSchema>;
 
 export const analyzeRequestSchema = z.object({
-  assessmentVersion: z.literal("1.0"),
+  assessmentVersion: z.literal("2.0"),
   answers: z.object(
     Object.fromEntries(questionIds.map((id) => [id, z.string().min(1).max(80)])) as Record<
       QuestionId,
@@ -46,11 +50,12 @@ export const analyzeRequestSchema = z.object({
 export type AnalyzeRequest = z.infer<typeof analyzeRequestSchema>;
 
 export const analyzeResponseSchema = z.object({
-  assessmentVersion: z.literal("1.0"),
+  assessmentVersion: z.literal("2.0"),
   source: z.enum(["model", "fallback"]),
-  recommendation: z.enum(["evolution", "revolution"]),
-  revolutionScore: z.number().int().min(0).max(100),
-  evolutionScore: z.number().int().min(0).max(100),
+  recommendation: z.enum(routeTypes),
+  depthScore: z.number().int().min(0).max(100),
+  speedPressureScore: z.number().int().min(0).max(100),
+  capacityScore: z.number().int().min(0).max(100),
   confidence: z.enum(["low", "medium", "high"]),
   boundaryState: z.boolean(),
   report: reportSchema,

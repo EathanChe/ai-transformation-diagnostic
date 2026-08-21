@@ -30,8 +30,8 @@ const emptyAnswers = Object.fromEntries(questions.map((question) => [question.id
 >;
 
 const loadingSteps = [
-  "正在计算两条路线的适配度",
-  "正在识别组织承载与战略窗口",
+  "正在计算变革深度与速度压力",
+  "正在评估组织承载能力",
   "正在生成 90 天行动建议",
 ];
 
@@ -54,7 +54,7 @@ function Intro({ onStart }: { onStart: () => void }) {
         <div className="hero-copy">
           <div className="eyebrow-pill">
             <Sparkles size={15} aria-hidden="true" />
-            <span>8 个问题 · 约 3 分钟</span>
+            <span>8 个核心判断 · 约 4 分钟</span>
           </div>
           <h1>
             AI 转型的关键，
@@ -62,8 +62,8 @@ function Intro({ onStart }: { onStart: () => void }) {
             是选择合适的<span>变革速度</span>
           </h1>
           <p className="hero-lead">
-            基于 Balogun 与 Hope Hailey 的战略变革模型，判断你的企业更适合分阶段推进的
-            <strong>进化路线</strong>，或集中发生的<strong>革命路线</strong>。
+            基于 Balogun 与 Hope Hailey 的战略变革模型，从变革深度、速度压力和组织承载三个维度，
+            识别企业当前更适合的<strong>战略变革路线</strong>。
           </p>
           <button className="primary-button" type="button" onClick={onStart}>
             开始战略诊断
@@ -87,8 +87,8 @@ function Intro({ onStart }: { onStart: () => void }) {
           <article>
             <Gauge aria-hidden="true" />
             <span>01</span>
-            <h3>双路线适配度</h3>
-            <p>比较进化与革命两条路线，识别判断置信度。</p>
+            <h3>四种路线定位</h3>
+            <p>识别适应、重构、进化与革命，并标注判断置信度。</p>
           </article>
           <article>
             <Layers3 aria-hidden="true" />
@@ -180,7 +180,7 @@ export default function App() {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
-          assessmentVersion: "1.0",
+          assessmentVersion: "2.0",
           answers: values.answers,
           context: values.context.trim() || undefined,
           turnstileToken,
@@ -248,7 +248,7 @@ export default function App() {
           <section className="question-card animate-rise" key={currentIndex}>
             {isContextQuestion ? (
               <>
-                <div className="question-number">08</div>
+                <div className="question-number question-number-text">补充</div>
                 <p className="question-eyebrow">补充背景 · 选填</p>
                 <h1>还有哪些关键信息需要纳入判断？</h1>
                 <p className="question-hint">
