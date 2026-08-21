@@ -1,0 +1,8 @@
+name = "ai-transformation-diagnostic"
+compatibility_date = "2026-08-20"
+compatibility_flags = ["nodejs_compat"]
+pages_build_output_dir = "dist"
+
+[vars]
+LLM_BASE_URL = "https://api.deepseek.com"
+LLM_MODEL = "deepseek-chat"
