@@ -14,6 +14,11 @@ type ResultViewProps = {
 };
 
 const routeCopy = {
+  "evidence-gap": {
+    cn: "证据待补",
+    en: "EVIDENCE GAP",
+    descriptor: "关键事实不足，暂缓路线选择",
+  },
   adaptation: {
     cn: "适应",
     en: "ADAPTATION",
@@ -37,20 +42,21 @@ const routeCopy = {
 };
 
 const confidenceCopy = {
-  low: "边界状态",
+  low: "低置信",
   medium: "中等置信",
   high: "高置信",
 };
 
-function ScoreBar({ label, score }: { label: string; score: number }) {
+function ScoreBar({ label, score }: { label: string; score: number | null }) {
+  const missing = score === null;
   return (
-    <div className="score-row score-row-active">
+    <div className={`score-row score-row-active ${missing ? "score-row-missing" : ""}`}>
       <div className="score-meta">
         <span>{label}</span>
-        <strong>{score}</strong>
+        <strong>{missing ? "—" : score}</strong>
       </div>
-      <div className="score-track" aria-label={`${label}适配度 ${score} 分`}>
-        <div className="score-fill" style={{ width: `${score}%` }} />
+      <div className="score-track" aria-label={missing ? `${label}证据不足` : `${label} ${score} 分`}>
+        <div className="score-fill" style={{ width: `${score ?? 0}%` }} />
       </div>
     </div>
   );
@@ -69,7 +75,7 @@ export function ResultView({ result, onRestart }: ResultViewProps) {
         </div>
         <div className="result-route-grid">
           <div>
-            <p className="result-label">推荐变革路线</p>
+            <p className="result-label">{result.recommendation === "evidence-gap" ? "当前判断状态" : "当前证据支持的路线"}</p>
             <h1>{route.cn}</h1>
             <p className="result-route-en">{route.en}</p>
           </div>
@@ -78,10 +84,14 @@ export function ResultView({ result, onRestart }: ResultViewProps) {
             <p>{result.report.headline}</p>
           </div>
         </div>
-        {result.boundaryState && (
+        {(result.boundaryState || result.recommendation === "evidence-gap") && (
           <div className="boundary-note">
             <AlertTriangle size={18} aria-hidden="true" />
-            <span>当前判断接近路线阈值。建议通过短周期验证项目校准变革深度或推进速度。</span>
+            <span>
+              {result.recommendation === "evidence-gap"
+                ? "关键事实缺少记录或存在冲突。补齐证据后再选择变革路线。"
+                : "当前判断接近路线阈值。建议增加一个同口径项目样本后复核。"}
+            </span>
           </div>
         )}
       </header>
@@ -90,8 +100,8 @@ export function ResultView({ result, onRestart }: ResultViewProps) {
         <div className="section-heading">
           <span>01</span>
           <div>
-            <p>三个判断维度</p>
-            <h2 id="scores-title">深度、压力与承载能力分别计算</h2>
+            <p>事实证据评分</p>
+            <h2 id="scores-title">范围校正与证据完整度分别计算</h2>
           </div>
         </div>
         <div className="scores-card">
@@ -100,14 +110,15 @@ export function ResultView({ result, onRestart }: ResultViewProps) {
             score={result.depthScore}
           />
           <ScoreBar
-            label="速度压力"
-            score={result.speedPressureScore}
+            label="实际交付能力"
+            score={result.deliveryCapacityScore}
           />
           <ScoreBar
-            label="组织承载"
-            score={result.capacityScore}
+            label="运营证据"
+            score={result.operationalEvidenceScore}
           />
-          <p className="score-footnote">三个分值相互独立。60 分为深层变革和快速推进的判断阈值。</p>
+          <ScoreBar label="证据完整度" score={result.evidenceCompleteness} />
+          <p className="score-footnote">交付能力由同一个实际项目的覆盖部门数与实际耗时共同计算；未知事实不按低分处理。</p>
         </div>
       </section>
 
@@ -116,7 +127,7 @@ export function ResultView({ result, onRestart }: ResultViewProps) {
           <span>02</span>
           <div>
             <p>核心判断</p>
-            <h2 id="summary-title">为什么推荐这条路线</h2>
+            <h2 id="summary-title">多项事实共同支持什么判断</h2>
           </div>
         </div>
         <p className="executive-summary">{result.report.executiveSummary}</p>

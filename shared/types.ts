@@ -1,19 +1,25 @@
 import { z } from "zod";
 
 export const questionIds = [
-  "transformationDepth",
-  "decisionLayers",
-  "processCoupling",
-  "urgency",
-  "leadershipInvolvement",
-  "workflowReadiness",
-  "executionSpeed",
-  "roleRedesignScope",
+  "formalMandate",
+  "productionAiWorkflows",
+  "measuredAiWorkflows",
+  "recentProjectScope",
+  "recentProjectLeadTime",
+  "priorityWorkflowEvidence",
+  "leadershipDecisionCount",
+  "formalRoleChange",
 ] as const;
 
 export type QuestionId = (typeof questionIds)[number];
 
-export const routeTypes = ["adaptation", "reconstruction", "evolution", "revolution"] as const;
+export const routeTypes = [
+  "evidence-gap",
+  "adaptation",
+  "reconstruction",
+  "evolution",
+  "revolution",
+] as const;
 export type RouteType = (typeof routeTypes)[number];
 
 export const reportSchema = z.object({
@@ -36,7 +42,7 @@ export const reportSchema = z.object({
 export type DiagnosticReport = z.infer<typeof reportSchema>;
 
 export const analyzeRequestSchema = z.object({
-  assessmentVersion: z.literal("2.0"),
+  assessmentVersion: z.literal("3.0"),
   answers: z.object(
     Object.fromEntries(questionIds.map((id) => [id, z.string().min(1).max(80)])) as Record<
       QuestionId,
@@ -49,13 +55,16 @@ export const analyzeRequestSchema = z.object({
 
 export type AnalyzeRequest = z.infer<typeof analyzeRequestSchema>;
 
+const nullableScore = z.number().int().min(0).max(100).nullable();
+
 export const analyzeResponseSchema = z.object({
-  assessmentVersion: z.literal("2.0"),
+  assessmentVersion: z.literal("3.0"),
   source: z.enum(["model", "fallback"]),
   recommendation: z.enum(routeTypes),
-  depthScore: z.number().int().min(0).max(100),
-  speedPressureScore: z.number().int().min(0).max(100),
-  capacityScore: z.number().int().min(0).max(100),
+  depthScore: nullableScore,
+  deliveryCapacityScore: nullableScore,
+  operationalEvidenceScore: nullableScore,
+  evidenceCompleteness: z.number().int().min(0).max(100),
   confidence: z.enum(["low", "medium", "high"]),
   boundaryState: z.boolean(),
   report: reportSchema,

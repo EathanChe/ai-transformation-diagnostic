@@ -924,6 +924,14 @@ a:focus-visible {
   background: var(--coral);
 }
 
+.score-row-missing .score-meta strong {
+  color: #8d978f;
+}
+
+.score-row-missing .score-fill {
+  animation: none;
+}
+
 .score-footnote {
   margin: 22px 0 0;
   color: #839087;

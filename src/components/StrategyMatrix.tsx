@@ -25,7 +25,7 @@ export function StrategyMatrix() {
         </div>
       </div>
       <figcaption id="matrix-caption">
-        Balogun 与 Hope Hailey 的变革类型模型。测评先判断深度，再结合速度压力与组织承载选择路线。
+        Balogun 与 Hope Hailey 的变革类型模型。测评依据正式授权、实际交付和运营记录判断当前证据支持的路线。
       </figcaption>
     </figure>
   );

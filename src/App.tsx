@@ -30,8 +30,8 @@ const emptyAnswers = Object.fromEntries(questions.map((question) => [question.id
 >;
 
 const loadingSteps = [
-  "正在计算变革深度与速度压力",
-  "正在评估组织承载能力",
+  "正在核对事实证据完整度",
+  "正在按项目范围校正交付能力",
   "正在生成 90 天行动建议",
 ];
 
@@ -54,7 +54,7 @@ function Intro({ onStart }: { onStart: () => void }) {
         <div className="hero-copy">
           <div className="eyebrow-pill">
             <Sparkles size={15} aria-hidden="true" />
-            <span>8 个核心判断 · 约 4 分钟</span>
+            <span>8 项事实核验 · 约 4 分钟</span>
           </div>
           <h1>
             AI 转型的关键，
@@ -62,8 +62,8 @@ function Intro({ onStart }: { onStart: () => void }) {
             是选择合适的<span>变革速度</span>
           </h1>
           <p className="hero-lead">
-            基于 Balogun 与 Hope Hailey 的战略变革模型，从变革深度、速度压力和组织承载三个维度，
-            识别企业当前更适合的<strong>战略变革路线</strong>。
+            基于已批准文件、项目台账和真实运行记录，判断企业当前能够获得事实支持的
+            <strong>战略变革路线</strong>。
           </p>
           <button className="primary-button" type="button" onClick={onStart}>
             开始战略诊断
@@ -87,14 +87,14 @@ function Intro({ onStart }: { onStart: () => void }) {
           <article>
             <Gauge aria-hidden="true" />
             <span>01</span>
-            <h3>四种路线定位</h3>
-            <p>识别适应、重构、进化与革命，并标注判断置信度。</p>
+            <h3>事实证据完整度</h3>
+            <p>允许选择“无法确认”，关键记录不足时暂停路线判断。</p>
           </article>
           <article>
             <Layers3 aria-hidden="true" />
             <span>02</span>
             <h3>关键证据与风险</h3>
-            <p>从组织负担、时间窗口和变革能力解释结论。</p>
+            <p>结合实际项目范围、交付耗时和运行指标解释结论。</p>
           </article>
           <article>
             <BrainCircuit aria-hidden="true" />
@@ -180,7 +180,7 @@ export default function App() {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
-          assessmentVersion: "2.0",
+          assessmentVersion: "3.0",
           answers: values.answers,
           context: values.context.trim() || undefined,
           turnstileToken,
@@ -250,9 +250,9 @@ export default function App() {
               <>
                 <div className="question-number question-number-text">补充</div>
                 <p className="question-eyebrow">补充背景 · 选填</p>
-                <h1>还有哪些关键信息需要纳入判断？</h1>
+                <h1>还有哪些已发生的事实需要纳入判断？</h1>
                 <p className="question-hint">
-                  请用几句话说明企业最大的 AI 转型目标、最担心的风险，或最希望改造的流程。
+                  可补充未被题目覆盖的已批准文件、已上线项目、已生效制度或已记录指标。
                 </p>
                 <div className="textarea-wrap">
                   <textarea
@@ -260,7 +260,7 @@ export default function App() {
                     onChange={(event) => setValue("context", event.target.value.slice(0, 300))}
                     maxLength={300}
                     rows={7}
-                    placeholder="例如：我们希望在一年内重构电商客服与营销流程，但担心现有数据分散、业务团队抵触……"
+                    placeholder="例如：2025 年 6 月批准客服流程改造，9 月上线；上线前后均使用一次解决率作为指标……"
                     aria-label="企业 AI 转型背景补充"
                   />
                   <span>{context.length} / 300</span>

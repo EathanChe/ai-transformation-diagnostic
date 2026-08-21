@@ -3,97 +3,123 @@ import { scoreAssessment } from "./assessment";
 import type { AnalyzeRequest } from "./types";
 
 const revolutionAnswers: AnalyzeRequest["answers"] = {
-  transformationDepth: "strategy-organization",
-  decisionLayers: "one-layer",
-  processCoupling: "zero-systems",
-  urgency: "already-impacted",
-  leadershipInvolvement: "weekly-chair",
-  workflowReadiness: "production-measured",
-  executionSpeed: "under-2w",
-  roleRedesignScope: "company-wide",
+  formalMandate: "company-program",
+  productionAiWorkflows: "eleven-plus",
+  measuredAiWorkflows: "eleven-plus",
+  recentProjectScope: "nine-plus-departments",
+  recentProjectLeadTime: "under-2w",
+  priorityWorkflowEvidence: "operations-dashboard",
+  leadershipDecisionCount: "seven-plus",
+  formalRoleChange: "reporting-structure",
 };
 
 const adaptationAnswers: AnalyzeRequest["answers"] = {
-  transformationDepth: "individual-tasks",
-  decisionLayers: "one-layer",
-  processCoupling: "zero-systems",
-  urgency: "over-24m",
-  leadershipInvolvement: "weekly-chair",
-  workflowReadiness: "production-measured",
-  executionSpeed: "under-2w",
-  roleRedesignScope: "no-redesign",
+  formalMandate: "no-mandate",
+  productionAiWorkflows: "zero",
+  measuredAiWorkflows: "zero",
+  recentProjectScope: "no-project",
+  recentProjectLeadTime: "no-project",
+  priorityWorkflowEvidence: "none",
+  leadershipDecisionCount: "zero",
+  formalRoleChange: "none",
 };
 
 describe("scoreAssessment", () => {
-  it("identifies a high-confidence revolution profile", () => {
+  it("identifies revolution from complete high-depth delivery and operating records", () => {
     const result = scoreAssessment(revolutionAnswers);
     expect(result.recommendation).toBe("revolution");
     expect(result.depthScore).toBe(100);
-    expect(result.speedPressureScore).toBe(100);
-    expect(result.capacityScore).toBe(100);
+    expect(result.deliveryCapacityScore).toBe(100);
+    expect(result.operationalEvidenceScore).toBe(100);
+    expect(result.evidenceCompleteness).toBe(100);
     expect(result.confidence).toBe("high");
-    expect(result.boundaryState).toBe(false);
   });
 
-  it("identifies evolution when the target is deep and the window allows staged change", () => {
-    const result = scoreAssessment({ ...revolutionAnswers, urgency: "over-24m" });
+  it("identifies evolution when deep authorization exists without proven delivery speed", () => {
+    const result = scoreAssessment({
+      ...revolutionAnswers,
+      recentProjectScope: "no-project",
+      recentProjectLeadTime: "no-project",
+    });
     expect(result.recommendation).toBe("evolution");
-    expect(result.depthScore).toBe(100);
-    expect(result.speedPressureScore).toBe(0);
-    expect(result.capacityScore).toBe(100);
-    expect(result.confidence).toBe("high");
+    expect(result.deliveryCapacityScore).toBe(0);
+    expect(result.riskSignals).toContain("no-delivery-evidence");
   });
 
-  it("identifies adaptation for a limited and gradual change", () => {
+  it("identifies adaptation from complete records of limited and low-capability change", () => {
     const result = scoreAssessment(adaptationAnswers);
     expect(result.recommendation).toBe("adaptation");
     expect(result.depthScore).toBe(0);
-    expect(result.speedPressureScore).toBe(0);
+    expect(result.operationalEvidenceScore).toBe(0);
+    expect(result.evidenceCompleteness).toBe(100);
   });
 
-  it("identifies reconstruction for a limited change with high speed pressure and capacity", () => {
+  it("identifies reconstruction from limited formal change and strong delivery evidence", () => {
     const result = scoreAssessment({
       ...revolutionAnswers,
-      transformationDepth: "single-role",
-      roleRedesignScope: "individual-tasks",
+      formalMandate: "one-team-process",
+      formalRoleChange: "job-description",
     });
     expect(result.recommendation).toBe("reconstruction");
-    expect(result.depthScore).toBe(25);
-    expect(result.speedPressureScore).toBe(100);
-    expect(result.capacityScore).toBeGreaterThanOrEqual(60);
+    expect(result.depthScore).toBe(50);
   });
 
-  it("marks a result near the depth threshold as a boundary state", () => {
-    const result = scoreAssessment({
+  it("adjusts the same lead time according to the actual project scope", () => {
+    const smallProject = scoreAssessment({
       ...revolutionAnswers,
-      transformationDepth: "multiple-processes",
-      roleRedesignScope: "no-redesign",
+      recentProjectScope: "two-departments",
+      recentProjectLeadTime: "7-12w",
     });
-    expect(result.depthScore).toBe(56);
-    expect(result.recommendation).toBe("reconstruction");
-    expect(result.confidence).toBe("low");
-    expect(result.boundaryState).toBe(true);
+    const largeProject = scoreAssessment({
+      ...revolutionAnswers,
+      recentProjectScope: "nine-plus-departments",
+      recentProjectLeadTime: "7-12w",
+    });
+    expect(smallProject.deliveryCapacityScore).toBe(50);
+    expect(largeProject.deliveryCapacityScore).toBe(80);
   });
 
-  it("detects urgency-capacity conflict without forcing a fast route", () => {
+  it("returns an evidence gap when a critical fact is unknown", () => {
+    const result = scoreAssessment({ ...revolutionAnswers, formalMandate: "unknown" });
+    expect(result.recommendation).toBe("evidence-gap");
+    expect(result.evidenceCompleteness).toBe(88);
+    expect(result.unknownQuestions).toContain("formalMandate");
+    expect(result.riskSignals).toContain("evidence-gap");
+  });
+
+  it("returns an evidence gap for contradictory project records", () => {
     const result = scoreAssessment({
       ...revolutionAnswers,
-      decisionLayers: "five-plus-layers",
-      processCoupling: "six-plus-systems",
-      leadershipInvolvement: "not-involved",
-      workflowReadiness: "not-mapped",
-      executionSpeed: "over-6m",
-      roleRedesignScope: "no-redesign",
+      recentProjectScope: "no-project",
+      recentProjectLeadTime: "under-2w",
     });
-    expect(result.recommendation).toBe("evolution");
-    expect(result.riskSignals).toContain("speed-capacity-conflict");
-    expect(result.riskSignals).toContain("window-loss");
-    expect(result.riskSignals).toContain("leadership-gap");
+    expect(result.recommendation).toBe("evidence-gap");
+    expect(result.deliveryCapacityScore).toBeNull();
+    expect(result.riskSignals).toContain("inconsistent-project-record");
+  });
+
+  it("detects a measurement gap from production and baseline records", () => {
+    const result = scoreAssessment({
+      ...revolutionAnswers,
+      productionAiWorkflows: "four-ten",
+      measuredAiWorkflows: "zero",
+    });
+    expect(result.riskSignals).toContain("measurement-gap");
+  });
+
+  it("rejects an impossible measured-workflow count as an evidence conflict", () => {
+    const result = scoreAssessment({
+      ...revolutionAnswers,
+      productionAiWorkflows: "one",
+      measuredAiWorkflows: "four-ten",
+    });
+    expect(result.recommendation).toBe("evidence-gap");
+    expect(result.riskSignals).toContain("inconsistent-operational-record");
   });
 
   it("rejects a forged option id", () => {
-    expect(() =>
-      scoreAssessment({ ...revolutionAnswers, leadershipInvolvement: "score-100" }),
-    ).toThrow(/Invalid option/);
+    expect(() => scoreAssessment({ ...revolutionAnswers, formalMandate: "score-100" })).toThrow(
+      /Invalid option/,
+    );
   });
 });

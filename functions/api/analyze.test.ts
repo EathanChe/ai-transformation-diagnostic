@@ -8,16 +8,16 @@ import {
 } from "./analyze";
 
 const validBody = {
-  assessmentVersion: "2.0",
+  assessmentVersion: "3.0",
   answers: {
-    transformationDepth: "strategy-organization",
-    decisionLayers: "one-layer",
-    processCoupling: "zero-systems",
-    urgency: "already-impacted",
-    leadershipInvolvement: "weekly-chair",
-    workflowReadiness: "production-measured",
-    executionSpeed: "under-2w",
-    roleRedesignScope: "company-wide",
+    formalMandate: "company-program",
+    productionAiWorkflows: "eleven-plus",
+    measuredAiWorkflows: "eleven-plus",
+    recentProjectScope: "nine-plus-departments",
+    recentProjectLeadTime: "under-2w",
+    priorityWorkflowEvidence: "operations-dashboard",
+    leadershipDecisionCount: "seven-plus",
+    formalRoleChange: "reporting-structure",
   },
   context: "希望快速重构电商流程",
   turnstileToken: "test-token",
@@ -55,8 +55,9 @@ describe("handleAnalyzeRequest", () => {
     expect(body.source).toBe("fallback");
     expect(body.recommendation).toBe("revolution");
     expect(body.depthScore).toBe(100);
-    expect(body.speedPressureScore).toBe(100);
-    expect(body.capacityScore).toBe(100);
+    expect(body.deliveryCapacityScore).toBe(100);
+    expect(body.operationalEvidenceScore).toBe(100);
+    expect(body.evidenceCompleteness).toBe(100);
   });
 
   it("returns a validated report from an OpenAI-compatible model", async () => {
@@ -82,7 +83,7 @@ describe("handleAnalyzeRequest", () => {
 
   it("rejects missing required answers", async () => {
     const response = await handleAnalyzeRequest(
-      request({ assessmentVersion: "2.0", answers: {}, turnstileToken: "test" }),
+      request({ assessmentVersion: "3.0", answers: {}, turnstileToken: "test" }),
       {},
     );
     expect(response.status).toBe(400);
@@ -90,7 +91,7 @@ describe("handleAnalyzeRequest", () => {
 
   it("rejects an option id that is not in the server definition", async () => {
     const response = await handleAnalyzeRequest(
-      request({ ...validBody, answers: { ...validBody.answers, leadershipInvolvement: "forged-100" } }),
+      request({ ...validBody, answers: { ...validBody.answers, formalMandate: "forged-100" } }),
       {},
     );
     expect(response.status).toBe(400);

@@ -11,17 +11,17 @@ describe("App", () => {
   it("starts the assessment and prevents advancing without an answer", () => {
     render(<App />);
     fireEvent.click(screen.getByRole("button", { name: /开始战略诊断/ }));
-    expect(screen.getByRole("heading", { name: /未来 12–24 个月/ })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /正式批准的 AI 转型文件/ })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /下一题/ })).toBeDisabled();
   });
 
   it("selects an option and advances to the next question", () => {
     render(<App />);
     fireEvent.click(screen.getByRole("button", { name: /开始战略诊断/ }));
-    fireEvent.click(screen.getByRole("radio", { name: /少数员工的个人任务/ }));
+    fireEvent.click(screen.getByRole("radio", { name: /没有正式批准文件/ }));
     const next = screen.getByRole("button", { name: /下一题/ });
     expect(next).toBeEnabled();
     fireEvent.click(next);
-    expect(screen.getByRole("heading", { name: /多少个正式决策层级/ })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /连续 4 周在真实业务/ })).toBeInTheDocument();
   });
 });
