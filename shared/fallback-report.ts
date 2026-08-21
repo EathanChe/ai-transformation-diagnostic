@@ -4,7 +4,7 @@ import type { DiagnosticReport, QuestionId, RouteType } from "./types";
 const questionName: Record<QuestionId, string> = {
   formalMandate: "正式授权范围",
   productionAiWorkflows: "真实运行流程数",
-  measuredAiWorkflows: "具备前后指标的流程数",
+  measuredAiWorkflows: "有使用前后结果对比的 AI 应用数",
   recentProjectScope: "最近项目覆盖范围",
   recentProjectLeadTime: "最近项目实际耗时",
   priorityWorkflowEvidence: "优先流程材料",
@@ -15,9 +15,9 @@ const questionName: Record<QuestionId, string> = {
 const riskCopy: Record<RiskSignal, string> = {
   "evidence-gap": "部分关键事实缺少可核验记录，当前路线判断的证据基础有限。",
   "inconsistent-project-record": "最近项目的覆盖范围与耗时答案互相冲突，需要核对项目台账。",
-  "inconsistent-operational-record": "具备前后指标的流程数量超过真实运行流程数量，需要核对统计口径。",
-  "no-delivery-evidence": "过去 24 个月没有可用于判断跨部门交付能力的已上线项目。",
-  "measurement-gap": "已有 AI 流程进入真实业务，但缺少同口径的上线前后指标，业务价值无法验证。",
+  "inconsistent-operational-record": "有使用前后结果对比的 AI 应用数量超过实际运行数量，需要核对记录。",
+  "no-delivery-evidence": "过去 12 个月没有可用于判断跨部门交付能力的已投入使用项目。",
+  "measurement-gap": "已有 AI 应用进入真实业务，但拿不出使用前后的业务结果对比，实际价值无法验证。",
   "leadership-gap": "一号位近期缺少形成记录的 AI 决策活动，跨部门争议可能无法及时裁决。",
   "workflow-evidence-gap": "优先流程缺少足够的书面材料，实施团队容易在规则和异常处理上反复返工。",
   "role-change-gap": "正式授权范围已经扩大，岗位管理变化仍停留在较浅层级。",
@@ -46,8 +46,8 @@ function evidenceFor(result: AssessmentResult): string[] {
   const evidence = [
     `正式授权为“${answers.formalMandate}”，已生效岗位变化为“${answers.formalRoleChange}”，两项记录共同形成 ${scoreText(result.depthScore)}的变革深度。`,
     `最近项目覆盖“${answers.recentProjectScope}”、实际耗时“${answers.recentProjectLeadTime}”；按项目范围校正后，交付能力为 ${scoreText(result.deliveryCapacityScore)}。`,
-    `真实运行流程为“${answers.productionAiWorkflows}”，其中具备前后指标的流程为“${answers.measuredAiWorkflows}”，结合现有流程材料后，运营证据为 ${scoreText(result.operationalEvidenceScore)}。`,
-    `一号位决策记录为“${answers.leadershipDecisionCount}”，需要与实际上线数量和指标覆盖率一起判断治理是否进入稳定节奏。`,
+    `真实运行的 AI 应用为“${answers.productionAiWorkflows}”，其中能拿出使用前后结果对比的为“${answers.measuredAiWorkflows}”，结合现有流程材料后，运营证据为 ${scoreText(result.operationalEvidenceScore)}。`,
+    `一号位决策记录为“${answers.leadershipDecisionCount}”，需要与实际使用数量和结果记录覆盖率一起判断治理是否进入稳定节奏。`,
   ];
   if (result.unknownQuestions.length > 0) {
     evidence[3] = `当前证据完整度为 ${result.evidenceCompleteness} 分；待核实项目包括：${result.unknownQuestions.map((id) => questionName[id]).join("、")}。`;
@@ -67,12 +67,12 @@ const routeContent: Record<
       {
         phase: "第 1–30 天",
         objective: "建立最小事实清单",
-        actions: ["收集 AI 相关会议纪要、项目章程、预算文件和岗位制度。", "统一真实上线、流程数量和业务指标的统计口径。"],
+        actions: ["收集 AI 相关会议纪要、项目章程、预算文件和岗位制度。", "统一投入使用、应用数量和业务结果的记录方式。"],
       },
       {
         phase: "第 31–60 天",
         objective: "补齐项目与运营记录",
-        actions: ["从项目台账核对最近跨部门项目的覆盖范围、批准日期和上线日期。", "为已上线 AI 流程补录上线前基线与连续四周指标。"],
+        actions: ["从项目台账核对最近跨部门项目的覆盖范围、批准日期和投入使用日期。", "为已经使用的 AI 应用补录使用前后的业务结果。"],
       },
       {
         phase: "第 61–90 天",
@@ -89,7 +89,7 @@ const routeContent: Record<
       {
         phase: "第 1–30 天",
         objective: "确定一个可测量的局部改进",
-        actions: ["选择一个高频任务并冻结上线前业务基线。", "形成责任人、操作规则和人工复核记录。"],
+        actions: ["选择一个高频任务并记录使用 AI 前的业务结果。", "形成责任人、操作规则和人工复核记录。"],
       },
       {
         phase: "第 31–60 天",
@@ -99,7 +99,7 @@ const routeContent: Record<
       {
         phase: "第 61–90 天",
         objective: "依据数据决定是否扩大",
-        actions: ["比较上线前后指标并完成业务复盘。", "根据结果决定维持局部改进或申请更大授权范围。"],
+        actions: ["比较使用 AI 前后的业务结果并完成复盘。", "根据结果决定维持局部改进或申请更大授权范围。"],
       },
     ],
   },
@@ -110,8 +110,8 @@ const routeContent: Record<
     actions90Days: [
       {
         phase: "第 1–30 天",
-        objective: "锁定重构边界与数据基线",
-        actions: ["从正式授权文件确认唯一实施范围。", "冻结批准日期、上线日期、业务基线和中止条件。"],
+        objective: "锁定重构边界与使用前记录",
+        actions: ["从正式授权文件确认唯一实施范围。", "记录批准日期、投入使用日期、使用前业务结果和中止条件。"],
       },
       {
         phase: "第 31–60 天",
@@ -133,7 +133,7 @@ const routeContent: Record<
       {
         phase: "第 1–30 天",
         objective: "选定试点并建立扩展证据",
-        actions: ["选择一条已有流程材料的核心流程。", "设定上线前基线、连续四周指标和扩展门槛。"],
+        actions: ["选择一条已有流程材料的核心流程。", "记录使用前业务结果，并设定连续四周观察项和扩展门槛。"],
       },
       {
         phase: "第 31–60 天",
@@ -155,7 +155,7 @@ const routeContent: Record<
       {
         phase: "第 1–30 天",
         objective: "建立全公司级证据与决策机制",
-        actions: ["统一项目台账、业务基线和 AI 运行指标。", "由一号位主持固定节奏的跨部门决策会议。"],
+        actions: ["统一项目台账、使用前业务结果和 AI 运行记录。", "由一号位主持固定节奏的跨部门决策会议。"],
       },
       {
         phase: "第 31–60 天",
@@ -174,7 +174,7 @@ const routeContent: Record<
 export function createFallbackReport(result: AssessmentResult): DiagnosticReport {
   const content = routeContent[result.recommendation];
   const boundaryText = result.boundaryState
-    ? " 当前分值接近路线阈值，建议增加一个同口径项目样本后复核。"
+    ? " 当前分值接近路线阈值，建议增加一个记录方式一致的项目样本后复核。"
     : "";
   return {
     headline: content.headline,

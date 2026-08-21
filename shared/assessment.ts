@@ -48,9 +48,9 @@ export const questions: QuestionDefinition[] = [
   },
   {
     id: "measuredAiWorkflows",
-    eyebrow: "效果证据",
-    title: "这些已上线流程中，有多少条同时具备上线前基线和上线后连续 4 周指标？",
-    hint: "基线与上线后指标必须采用同一业务口径。",
+    eyebrow: "结果对比",
+    title: "目前有多少项 AI 应用，能够拿出投入使用前后的业务结果对比？",
+    hint: "例如销售额、成本、处理时长、错误率或客户满意度；只统计已经留有数据记录的应用。",
     options: [
       option("zero", "0 条", 0),
       option("one", "1 条", 25),
@@ -63,7 +63,7 @@ export const questions: QuestionDefinition[] = [
   {
     id: "recentProjectScope",
     eyebrow: "项目实际范围",
-    title: "过去 24 个月最近一个已上线的跨部门数字化或 AI 项目，覆盖了多少个业务部门？",
+    title: "过去 12 个月最近一个已投入使用的跨部门数字化或 AI 项目，覆盖了多少个业务部门？",
     hint: "下一题将继续询问同一个项目的实际耗时。",
     options: [
       option("no-project", "没有符合条件的项目", 0),
@@ -77,8 +77,8 @@ export const questions: QuestionDefinition[] = [
   {
     id: "recentProjectLeadTime",
     eyebrow: "项目实际耗时",
-    title: "同一个项目，从正式批准到首次进入真实业务，实际用了多久？",
-    hint: "沿用上一题的项目；按批准日期和首次上线日期计算。",
+    title: "同一个项目，从正式批准到首次投入真实业务，实际用了多久？",
+    hint: "沿用上一题的项目；按批准日期和首次投入使用日期计算。",
     options: [
       option("no-project", "没有符合条件的项目", 0),
       option("under-2w", "2 周以内", 100),

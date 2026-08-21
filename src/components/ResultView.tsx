@@ -90,7 +90,7 @@ export function ResultView({ result, onRestart }: ResultViewProps) {
             <span>
               {result.recommendation === "evidence-gap"
                 ? "关键事实缺少记录或存在冲突。补齐证据后再选择变革路线。"
-                : "当前判断接近路线阈值。建议增加一个同口径项目样本后复核。"}
+                : "当前判断接近路线阈值。建议增加一个记录方式一致的项目样本后复核。"}
             </span>
           </div>
         )}

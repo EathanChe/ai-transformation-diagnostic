@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 const mockedResult = {
-  assessmentVersion: "3.0",
+  assessmentVersion: "3.1",
   source: "model",
   recommendation: "revolution",
   depthScore: 88,

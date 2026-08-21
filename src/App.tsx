@@ -180,7 +180,7 @@ export default function App() {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
-          assessmentVersion: "3.0",
+          assessmentVersion: "3.1",
           answers: values.answers,
           context: values.context.trim() || undefined,
           turnstileToken,
@@ -252,7 +252,7 @@ export default function App() {
                 <p className="question-eyebrow">补充背景 · 选填</p>
                 <h1>还有哪些已发生的事实需要纳入判断？</h1>
                 <p className="question-hint">
-                  可补充未被题目覆盖的已批准文件、已上线项目、已生效制度或已记录指标。
+                  可补充未被题目覆盖的已批准文件、已投入使用项目、已生效制度或已记录结果。
                 </p>
                 <div className="textarea-wrap">
                   <textarea
@@ -260,7 +260,7 @@ export default function App() {
                     onChange={(event) => setValue("context", event.target.value.slice(0, 300))}
                     maxLength={300}
                     rows={7}
-                    placeholder="例如：2025 年 6 月批准客服流程改造，9 月上线；上线前后均使用一次解决率作为指标……"
+                    placeholder="例如：2025 年 6 月批准客服流程改造，9 月投入使用；前后都记录了一次解决率……"
                     aria-label="企业 AI 转型背景补充"
                   />
                   <span>{context.length} / 300</span>

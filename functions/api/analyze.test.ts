@@ -8,7 +8,7 @@ import {
 } from "./analyze";
 
 const validBody = {
-  assessmentVersion: "3.0",
+  assessmentVersion: "3.1",
   answers: {
     formalMandate: "company-program",
     productionAiWorkflows: "eleven-plus",
@@ -83,7 +83,7 @@ describe("handleAnalyzeRequest", () => {
 
   it("rejects missing required answers", async () => {
     const response = await handleAnalyzeRequest(
-      request({ assessmentVersion: "3.0", answers: {}, turnstileToken: "test" }),
+      request({ assessmentVersion: "3.1", answers: {}, turnstileToken: "test" }),
       {},
     );
     expect(response.status).toBe(400);
