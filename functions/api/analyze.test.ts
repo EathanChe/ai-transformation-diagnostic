@@ -100,8 +100,10 @@ describe("handleAnalyzeRequest", () => {
 
   it("rejects a failed Turnstile challenge", async () => {
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(JSON.stringify({ success: false }), { status: 200 })));
-    const response = await handleAnalyzeRequest(request(validBody), { TURNSTILE_SECRET_KEY: "secret" });
-    expect(response.status).toBe(403);
+    for (let index = 0; index < 10; index += 1) {
+      const response = await handleAnalyzeRequest(request(validBody), { TURNSTILE_SECRET_KEY: "secret" });
+      expect(response.status).toBe(403);
+    }
   });
 
   it("limits repeated calls in a short window", () => {

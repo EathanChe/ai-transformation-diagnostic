@@ -88,7 +88,7 @@ function Intro({ onStart }: { onStart: () => void }) {
             <Gauge aria-hidden="true" />
             <span>01</span>
             <h3>事实证据完整度</h3>
-            <p>允许选择“无法确认”，关键记录不足时暂停路线判断。</p>
+            <p>允许选择“无法确认”，信息不足时自动降低结果置信度。</p>
           </article>
           <article>
             <Layers3 aria-hidden="true" />

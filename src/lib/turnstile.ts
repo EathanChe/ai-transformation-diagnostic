@@ -14,6 +14,7 @@ declare global {
 }
 
 const SCRIPT_ID = "cloudflare-turnstile-script";
+const PAGES_SITE_KEY = "0x4AAAAAAEXbCT9rkHRnGRcB";
 
 function loadTurnstile(): Promise<TurnstileInstance> {
   if (window.turnstile) return Promise.resolve(window.turnstile);
@@ -48,8 +49,14 @@ function loadTurnstile(): Promise<TurnstileInstance> {
 }
 
 export async function getTurnstileToken(): Promise<string> {
-  const sitekey = import.meta.env.VITE_TURNSTILE_SITE_KEY?.trim();
-  if (!sitekey) return "development-bypass";
+  const configuredSiteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY?.trim();
+  const sitekey =
+    configuredSiteKey ||
+    (window.location.hostname === "ai-transformation-diagnostic.pages.dev" ||
+    window.location.hostname.endsWith(".ai-transformation-diagnostic.pages.dev")
+      ? PAGES_SITE_KEY
+      : "");
+  if (!sitekey) return "";
 
   const turnstile = await loadTurnstile();
   const container = document.createElement("div");
@@ -70,7 +77,7 @@ export async function getTurnstileToken(): Promise<string> {
 
     widgetId = turnstile.render(container, {
       sitekey,
-      size: "invisible",
+      appearance: "interaction-only",
       execution: "execute",
       callback: (token?: string) => {
         window.clearTimeout(timeout);

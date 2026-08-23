@@ -230,10 +230,6 @@ async function runModelAnalysis(env: Env, result: AssessmentResult, context?: st
 
 export async function handleAnalyzeRequest(request: Request, env: Env): Promise<Response> {
   const clientAddress = getClientAddress(request);
-  if (isRateLimited(clientAddress)) {
-    return json({ code: "RATE_LIMITED", message: "请求过于频繁，请一分钟后重试。" }, 429);
-  }
-
   let rawBody: unknown;
   try {
     rawBody = await request.json();
@@ -252,7 +248,11 @@ export async function handleAnalyzeRequest(request: Request, env: Env): Promise<
     clientAddress,
   );
   if (!turnstileValid) {
-    return json({ code: "TURNSTILE_FAILED", message: "安全验证未通过，请刷新后重试。" }, 403);
+    return json({ code: "TURNSTILE_FAILED", message: "安全验证未完成，请点击“重新分析”再试。" }, 403);
+  }
+
+  if (isRateLimited(clientAddress)) {
+    return json({ code: "RATE_LIMITED", message: "提交次数较多，请一分钟后再试。" }, 429);
   }
 
   let assessment: AssessmentResult;
