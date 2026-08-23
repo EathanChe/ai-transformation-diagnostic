@@ -37,7 +37,7 @@ describe("createFallbackReport", () => {
     expect(report.risks.join(" ")).toContain("置信度");
   });
 
-  it("creates a schema-valid adaptation report from complete low-score records", () => {
+  it("creates a schema-valid evolution report from complete low-score records", () => {
     const result = scoreAssessment({
       formalMandate: "no-mandate",
       productionAiWorkflows: "zero",
@@ -48,7 +48,7 @@ describe("createFallbackReport", () => {
       leadershipDecisionCount: "zero",
       formalRoleChange: "none",
     });
-    expect(result.recommendation).toBe("adaptation");
+    expect(result.recommendation).toBe("evolution");
     expect(reportSchema.safeParse(createFallbackReport(result)).success).toBe(true);
   });
 });

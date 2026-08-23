@@ -957,6 +957,7 @@ a:focus-visible {
 }
 
 .evidence-card {
+  min-width: 0;
   min-height: 190px;
   padding: 24px;
   background: var(--canvas);
@@ -972,6 +973,8 @@ a:focus-visible {
   margin: 45px 0 0;
   font-size: 13px;
   line-height: 1.75;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .risk-section {

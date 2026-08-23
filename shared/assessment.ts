@@ -228,13 +228,7 @@ export function scoreAssessment(answers: AnalyzeRequest["answers"]): AssessmentR
   const decisionOperations = operationalEvidenceScore ?? 50;
   const deepChange = decisionDepth >= 60;
   const fastChange = Math.min(decisionDelivery, decisionOperations) >= 60;
-  const recommendation: RouteType = deepChange
-    ? fastChange
-      ? "revolution"
-      : "evolution"
-    : fastChange
-      ? "reconstruction"
-      : "adaptation";
+  const recommendation: RouteType = deepChange && fastChange ? "revolution" : "evolution";
 
   let confidence: "low" | "medium" | "high" = "low";
   const thresholdDistance = Math.min(

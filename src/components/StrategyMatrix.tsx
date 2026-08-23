@@ -13,19 +13,9 @@ export function StrategyMatrix() {
           <strong>Revolution</strong>
           <small>革命</small>
         </div>
-        <div className="matrix-cell matrix-cell-muted">
-          <span>有限 · 渐进</span>
-          <strong>Adaptation</strong>
-          <small>适应</small>
-        </div>
-        <div className="matrix-cell matrix-cell-muted">
-          <span>有限 · 快速</span>
-          <strong>Reconstruction</strong>
-          <small>重构</small>
-        </div>
       </div>
       <figcaption id="matrix-caption">
-        Balogun 与 Hope Hailey 的变革类型模型。测评依据正式授权、实际交付和运营记录判断当前证据支持的路线。
+        AI 转型聚焦深层变革。测评依据正式授权、实际交付和运营记录，在进化与革命之间判断合适路线。
       </figcaption>
     </figure>
   );

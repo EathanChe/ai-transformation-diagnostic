@@ -24,8 +24,6 @@ const riskCopy: Record<RiskSignal, string> = {
 };
 
 const defaultRisk: Record<RouteType, string> = {
-  adaptation: "局部优化容易长期停留在工具使用层面，需要设置是否扩大正式授权范围的复盘节点。",
-  reconstruction: "快速调整有限范围的流程会压缩协调时间，需要明确冻结范围和业务连续性底线。",
   evolution: "分阶段推进可能因验证周期过长而停滞，需要提前确定扩展、修正和停止条件。",
   revolution: "多条职能线同步推进会增加治理压力，需要统一决策节奏和风险边界。",
 };
@@ -57,50 +55,6 @@ const routeContent: Record<
   RouteType,
   Pick<DiagnosticReport, "headline" | "actions90Days"> & { summary: (result: AssessmentResult) => string }
 > = {
-  adaptation: {
-    headline: "以有记录的局部改进积累转型证据",
-    summary: (result) =>
-      `正式授权和已生效岗位变化显示当前变革范围有限，现有交付与运营记录也更支持渐进验证。证据完整度为 ${result.evidenceCompleteness} 分。`,
-    actions90Days: [
-      {
-        phase: "第 1–30 天",
-        objective: "确定一个可测量的局部改进",
-        actions: ["选择一个高频任务并记录使用 AI 前的业务结果。", "形成责任人、操作规则和人工复核记录。"],
-      },
-      {
-        phase: "第 31–60 天",
-        objective: "形成连续运行证据",
-        actions: ["在真实业务中连续运行四周。", "按同一口径记录采用率、时效、质量和异常。"],
-      },
-      {
-        phase: "第 61–90 天",
-        objective: "依据数据决定是否扩大",
-        actions: ["比较使用 AI 前后的业务结果并完成复盘。", "根据结果决定维持局部改进或申请更大授权范围。"],
-      },
-    ],
-  },
-  reconstruction: {
-    headline: "在有限授权范围内快速完成流程重构",
-    summary: (result) =>
-      `正式授权仍集中在有限范围，最近项目的范围校正交付记录与运营证据支持较快推进。证据完整度为 ${result.evidenceCompleteness} 分。`,
-    actions90Days: [
-      {
-        phase: "第 1–30 天",
-        objective: "锁定重构边界与使用前记录",
-        actions: ["从正式授权文件确认唯一实施范围。", "记录批准日期、投入使用日期、使用前业务结果和中止条件。"],
-      },
-      {
-        phase: "第 31–60 天",
-        objective: "集中完成真实业务切换",
-        actions: ["在选定范围运行新的 AI 工作流。", "按日记录异常、人工接管和业务连续性事件。"],
-      },
-      {
-        phase: "第 61–90 天",
-        objective: "固化记录并评估深层转型",
-        actions: ["形成流程、权限和质量标准。", "根据正式岗位变化需求决定是否扩大转型深度。"],
-      },
-    ],
-  },
   evolution: {
     headline: "用连续的真实业务证据推进深层转型",
     summary: (result) =>

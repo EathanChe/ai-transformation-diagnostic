@@ -13,7 +13,7 @@ const revolutionAnswers: AnalyzeRequest["answers"] = {
   formalRoleChange: "reporting-structure",
 };
 
-const adaptationAnswers: AnalyzeRequest["answers"] = {
+const lowReadinessAnswers: AnalyzeRequest["answers"] = {
   formalMandate: "no-mandate",
   productionAiWorkflows: "zero",
   measuredAiWorkflows: "zero",
@@ -46,21 +46,21 @@ describe("scoreAssessment", () => {
     expect(result.riskSignals).toContain("no-delivery-evidence");
   });
 
-  it("identifies adaptation from complete records of limited and low-capability change", () => {
-    const result = scoreAssessment(adaptationAnswers);
-    expect(result.recommendation).toBe("adaptation");
+  it("identifies evolution from complete records of limited readiness", () => {
+    const result = scoreAssessment(lowReadinessAnswers);
+    expect(result.recommendation).toBe("evolution");
     expect(result.depthScore).toBe(0);
     expect(result.operationalEvidenceScore).toBe(0);
     expect(result.evidenceCompleteness).toBe(100);
   });
 
-  it("identifies reconstruction from limited formal change and strong delivery evidence", () => {
+  it("identifies evolution when delivery is fast but deep-change authorization is limited", () => {
     const result = scoreAssessment({
       ...revolutionAnswers,
       formalMandate: "one-team-process",
       formalRoleChange: "job-description",
     });
-    expect(result.recommendation).toBe("reconstruction");
+    expect(result.recommendation).toBe("evolution");
     expect(result.depthScore).toBe(50);
   });
 

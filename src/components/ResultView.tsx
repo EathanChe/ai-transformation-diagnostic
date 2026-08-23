@@ -14,16 +14,6 @@ type ResultViewProps = {
 };
 
 const routeCopy = {
-  adaptation: {
-    cn: "适应",
-    en: "ADAPTATION",
-    descriptor: "分阶段完成有限范围的调整",
-  },
-  reconstruction: {
-    cn: "重构",
-    en: "RECONSTRUCTION",
-    descriptor: "在短时间内完成有限范围的调整",
-  },
   evolution: {
     cn: "进化",
     en: "EVOLUTION",

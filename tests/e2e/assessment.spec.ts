@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 const mockedResult = {
-  assessmentVersion: "3.2",
+  assessmentVersion: "3.3",
   source: "model",
   recommendation: "revolution",
   depthScore: 88,
@@ -13,7 +13,12 @@ const mockedResult = {
   report: {
     headline: "集中变革抢占窗口",
     executiveSummary: "组织条件支持集中推进 AI 深层转型。",
-    evidence: ["组织机制轻。", "领导层承诺充分。", "跨部门执行速度快。"],
+    evidence: [
+      "组织机制轻。",
+      "领导层承诺充分。",
+      "跨部门执行速度快。",
+      "ExtremelyLongUnbrokenDiagnosticFieldNameThatMustRemainInsideItsEvidenceCardAtEveryViewportWidth。",
+    ],
     risks: ["需要统一治理节奏。"],
     actions90Days: [
       { phase: "第 1–30 天", objective: "建立机制", actions: ["成立决策小组。"] },
@@ -42,4 +47,8 @@ test("completes all eight steps and renders the report", async ({ page }) => {
   await expect(page.getByRole("heading", { name: "革命" })).toBeVisible();
   await expect(page.getByText("集中变革抢占窗口")).toBeVisible();
   await expect(page.getByText("本次答案和报告不会被保存。")).toBeVisible();
+  const cardsFit = await page.locator(".evidence-card").evaluateAll((cards) =>
+    cards.every((card) => card.scrollWidth <= card.clientWidth),
+  );
+  expect(cardsFit).toBe(true);
 });

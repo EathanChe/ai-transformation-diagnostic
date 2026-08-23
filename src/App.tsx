@@ -178,7 +178,7 @@ export default function App() {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
-          assessmentVersion: "3.2",
+          assessmentVersion: "3.3",
           answers: values.answers,
           context: values.context.trim() || undefined,
           turnstileToken: "",

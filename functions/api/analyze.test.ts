@@ -8,7 +8,7 @@ import {
 } from "./analyze";
 
 const validBody = {
-  assessmentVersion: "3.2",
+  assessmentVersion: "3.3",
   answers: {
     formalMandate: "company-program",
     productionAiWorkflows: "eleven-plus",
@@ -83,7 +83,7 @@ describe("handleAnalyzeRequest", () => {
 
   it("rejects missing required answers", async () => {
     const response = await handleAnalyzeRequest(
-      request({ assessmentVersion: "3.2", answers: {}, turnstileToken: "test" }),
+      request({ assessmentVersion: "3.3", answers: {}, turnstileToken: "test" }),
       {},
     );
     expect(response.status).toBe(400);
@@ -113,5 +113,23 @@ describe("extractReportFromModelResponse", () => {
       choices: [{ message: { content: `\`\`\`json\n${JSON.stringify(validModelReport)}\n\`\`\`` } }],
     };
     expect(extractReportFromModelResponse(response)).toEqual(validModelReport);
+  });
+
+  it("removes internal field names from model copy", () => {
+    const reportWithFields = {
+      ...validModelReport,
+      executiveSummary: "正式授权（answers.formalMandate）与变革深度 fixedResult.depthScore 共同影响路线。",
+      evidence: [
+        "真实运行流程 answers.productionAiWorkflows 已形成记录。",
+        "运营基础（fixedResult.operationalEvidenceScore）需要继续积累。",
+        "结合 riskSignals 判断执行风险。",
+      ],
+    };
+    const response = {
+      choices: [{ message: { content: JSON.stringify(reportWithFields) } }],
+    };
+    const report = extractReportFromModelResponse(response);
+    expect(JSON.stringify(report)).not.toMatch(/answers\.|fixedResult\.|riskSignals/);
+    expect(report.executiveSummary).toContain("变革深度评分");
   });
 });
