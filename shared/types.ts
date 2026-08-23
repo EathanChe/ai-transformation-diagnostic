@@ -14,7 +14,6 @@ export const questionIds = [
 export type QuestionId = (typeof questionIds)[number];
 
 export const routeTypes = [
-  "evidence-gap",
   "adaptation",
   "reconstruction",
   "evolution",
@@ -42,7 +41,7 @@ export const reportSchema = z.object({
 export type DiagnosticReport = z.infer<typeof reportSchema>;
 
 export const analyzeRequestSchema = z.object({
-  assessmentVersion: z.literal("3.1"),
+  assessmentVersion: z.literal("3.2"),
   answers: z.object(
     Object.fromEntries(questionIds.map((id) => [id, z.string().min(1).max(80)])) as Record<
       QuestionId,
@@ -58,7 +57,7 @@ export type AnalyzeRequest = z.infer<typeof analyzeRequestSchema>;
 const nullableScore = z.number().int().min(0).max(100).nullable();
 
 export const analyzeResponseSchema = z.object({
-  assessmentVersion: z.literal("3.1"),
+  assessmentVersion: z.literal("3.2"),
   source: z.enum(["model", "fallback"]),
   recommendation: z.enum(routeTypes),
   depthScore: nullableScore,

@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 const mockedResult = {
-  assessmentVersion: "3.1",
+  assessmentVersion: "3.2",
   source: "model",
   recommendation: "revolution",
   depthScore: 88,
@@ -38,7 +38,7 @@ test("completes all eight steps and renders the report", async ({ page }) => {
   }
 
   await page.getByRole("button", { name: /生成诊断结果/ }).click();
-  await expect(page.getByText("当前证据支持的路线")).toBeVisible();
+  await expect(page.getByText("建议变革路线")).toBeVisible();
   await expect(page.getByRole("heading", { name: "革命" })).toBeVisible();
   await expect(page.getByText("集中变革抢占窗口")).toBeVisible();
   await expect(page.getByText("本次答案和报告不会被保存。")).toBeVisible();

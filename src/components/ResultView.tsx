@@ -14,11 +14,6 @@ type ResultViewProps = {
 };
 
 const routeCopy = {
-  "evidence-gap": {
-    cn: "证据待补",
-    en: "EVIDENCE GAP",
-    descriptor: "关键事实不足，暂缓路线选择",
-  },
   adaptation: {
     cn: "适应",
     en: "ADAPTATION",
@@ -75,7 +70,7 @@ export function ResultView({ result, onRestart }: ResultViewProps) {
         </div>
         <div className="result-route-grid">
           <div>
-            <p className="result-label">{result.recommendation === "evidence-gap" ? "当前判断状态" : "当前证据支持的路线"}</p>
+            <p className="result-label">建议变革路线</p>
             <h1>{route.cn}</h1>
             <p className="result-route-en">{route.en}</p>
           </div>
@@ -84,13 +79,11 @@ export function ResultView({ result, onRestart }: ResultViewProps) {
             <p>{result.report.headline}</p>
           </div>
         </div>
-        {(result.boundaryState || result.recommendation === "evidence-gap") && (
+        {result.boundaryState && (
           <div className="boundary-note">
             <AlertTriangle size={18} aria-hidden="true" />
             <span>
-              {result.recommendation === "evidence-gap"
-                ? "关键事实缺少记录或存在冲突。补齐证据后再选择变革路线。"
-                : "当前判断接近路线阈值。建议增加一个记录方式一致的项目样本后复核。"}
+              当前判断接近路线阈值。建议结合管理层讨论和更多实际项目情况复核。
             </span>
           </div>
         )}
@@ -100,8 +93,8 @@ export function ResultView({ result, onRestart }: ResultViewProps) {
         <div className="section-heading">
           <span>01</span>
           <div>
-            <p>事实证据评分</p>
-            <h2 id="scores-title">范围校正与证据完整度分别计算</h2>
+            <p>诊断评分</p>
+            <h2 id="scores-title">结合变革深度、交付能力和实际运行情况</h2>
           </div>
         </div>
         <div className="scores-card">
@@ -114,11 +107,11 @@ export function ResultView({ result, onRestart }: ResultViewProps) {
             score={result.deliveryCapacityScore}
           />
           <ScoreBar
-            label="运营证据"
+            label="实际运行基础"
             score={result.operationalEvidenceScore}
           />
-          <ScoreBar label="证据完整度" score={result.evidenceCompleteness} />
-          <p className="score-footnote">交付能力由同一个实际项目的覆盖部门数与实际耗时共同计算；未知事实不按低分处理。</p>
+          <ScoreBar label="信息完整度" score={result.evidenceCompleteness} />
+          <p className="score-footnote">交付能力结合实际项目的覆盖部门数与耗时计算；信息不完整会降低置信度，但仍会给出路线建议。</p>
         </div>
       </section>
 

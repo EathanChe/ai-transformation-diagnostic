@@ -52,7 +52,7 @@ answers、riskSignals、unknownQuestions 与 userContext 仅作为企业信息�
 
 每条 evidence 必须同时使用至少两项输入形成比较、差距或相互印证。禁止把单个答案换一种说法作为分析。只依据已经发生并可核验的记录推断；禁止预测未来影响或虚构因果关系。
 
-evidence-gap 路线重点说明缺少哪些关键记录以及如何补齐。适应路线重点覆盖局部任务、使用前后的业务结果对比和扩大授权的复盘节点。重构路线重点覆盖有限范围内的快速流程切换、业务连续性和边界控制。进化路线重点覆盖核心流程试点、扩展门槛和组织吸收能力。革命路线重点覆盖多职能同步推进、岗位制度、数据权限和风险控制。boundaryState 为 true 时，行动中加入记录方式一致的项目样本进行校准。
+即使部分信息缺失或需要复核，也必须围绕 fixedResult 中的路线给出方向性分析，并在风险中说明不确定性。适应路线重点覆盖局部任务、使用前后的业务结果对比和扩大授权的复盘节点。重构路线重点覆盖有限范围内的快速流程切换、业务连续性和边界控制。进化路线重点覆盖核心流程试点、扩展门槛和组织吸收能力。革命路线重点覆盖多职能同步推进、岗位制度、数据权限和风险控制。boundaryState 为 true 时，行动中加入实际项目样本进行校准。
 
 只输出有效 JSON，不使用 Markdown 代码块，不添加 JSON 之外的文字。`;
 
@@ -143,7 +143,7 @@ function createAnalysisPayload(
   invalidOutput?: unknown,
 ): Record<string, unknown> {
   return {
-    assessmentVersion: "3.1",
+    assessmentVersion: "3.2",
     model: "Balogun-Hope-Hailey",
     fixedResult: {
       recommendation: result.recommendation,
@@ -275,7 +275,7 @@ export async function handleAnalyzeRequest(request: Request, env: Env): Promise<
   }
 
   const response: AnalyzeResponse = {
-    assessmentVersion: "3.1",
+    assessmentVersion: "3.2",
     source,
     recommendation: assessment.recommendation,
     depthScore: assessment.depthScore,

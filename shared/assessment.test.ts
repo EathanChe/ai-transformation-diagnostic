@@ -79,23 +79,25 @@ describe("scoreAssessment", () => {
     expect(largeProject.deliveryCapacityScore).toBe(80);
   });
 
-  it("returns an evidence gap when a critical fact is unknown", () => {
+  it("still recommends a route with low confidence when a fact is unknown", () => {
     const result = scoreAssessment({ ...revolutionAnswers, formalMandate: "unknown" });
-    expect(result.recommendation).toBe("evidence-gap");
+    expect(result.recommendation).toBe("revolution");
     expect(result.evidenceCompleteness).toBe(88);
     expect(result.unknownQuestions).toContain("formalMandate");
-    expect(result.riskSignals).toContain("evidence-gap");
+    expect(result.riskSignals).toContain("information-gap");
+    expect(result.confidence).toBe("low");
   });
 
-  it("returns an evidence gap for contradictory project records", () => {
+  it("still recommends a route when project answers use different scopes", () => {
     const result = scoreAssessment({
       ...revolutionAnswers,
       recentProjectScope: "no-project",
       recentProjectLeadTime: "under-2w",
     });
-    expect(result.recommendation).toBe("evidence-gap");
-    expect(result.deliveryCapacityScore).toBeNull();
+    expect(result.recommendation).toBe("revolution");
+    expect(result.deliveryCapacityScore).toBe(60);
     expect(result.riskSignals).toContain("inconsistent-project-record");
+    expect(result.confidence).toBe("low");
   });
 
   it("detects a measurement gap from production and baseline records", () => {
@@ -107,14 +109,14 @@ describe("scoreAssessment", () => {
     expect(result.riskSignals).toContain("measurement-gap");
   });
 
-  it("rejects an impossible measured-workflow count as an evidence conflict", () => {
+  it("does not treat the two approximate count ranges as a hard conflict", () => {
     const result = scoreAssessment({
       ...revolutionAnswers,
       productionAiWorkflows: "one",
       measuredAiWorkflows: "four-ten",
     });
-    expect(result.recommendation).toBe("evidence-gap");
-    expect(result.riskSignals).toContain("inconsistent-operational-record");
+    expect(result.recommendation).toBe("revolution");
+    expect(result.riskSignals).not.toContain("information-gap");
   });
 
   it("rejects a forged option id", () => {

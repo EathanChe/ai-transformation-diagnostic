@@ -134,9 +134,8 @@ export const questions: QuestionDefinition[] = [
 ];
 
 export type RiskSignal =
-  | "evidence-gap"
+  | "information-gap"
   | "inconsistent-project-record"
-  | "inconsistent-operational-record"
   | "no-delivery-evidence"
   | "measurement-gap"
   | "leadership-gap"
@@ -207,14 +206,13 @@ export function scoreAssessment(answers: AnalyzeRequest["answers"]): AssessmentR
   const noScopeProject = selectedIds.recentProjectScope === "no-project";
   const noTimeProject = selectedIds.recentProjectLeadTime === "no-project";
   const inconsistentProjectRecord = noScopeProject !== noTimeProject;
-  const inconsistentOperationalRecord =
-    selectedScores.productionAiWorkflows !== null &&
-    selectedScores.measuredAiWorkflows !== null &&
-    selectedScores.measuredAiWorkflows > selectedScores.productionAiWorkflows;
   let deliveryCapacityScore: number | null = null;
   if (selectedScores.recentProjectScope !== null && selectedScores.recentProjectLeadTime !== null) {
     if (inconsistentProjectRecord) {
-      deliveryCapacityScore = null;
+      deliveryCapacityScore = weightedAverage([
+        [selectedScores.recentProjectScope, 0.4],
+        [selectedScores.recentProjectLeadTime, 0.6],
+      ]);
     } else if (noScopeProject && noTimeProject) {
       deliveryCapacityScore = 0;
     } else {
@@ -223,46 +221,37 @@ export function scoreAssessment(answers: AnalyzeRequest["answers"]): AssessmentR
     }
   }
 
-  const criticalEvidenceMissing =
-    selectedScores.formalMandate === null ||
-    deliveryCapacityScore === null ||
-    operationalEvidenceScore === null ||
-    inconsistentProjectRecord ||
-    inconsistentOperationalRecord;
-  const insufficientEvidence = evidenceCompleteness < 75 || criticalEvidenceMissing;
-
-  let recommendation: RouteType = "evidence-gap";
-  if (!insufficientEvidence && depthScore !== null && deliveryCapacityScore !== null && operationalEvidenceScore !== null) {
-    const deepChange = depthScore >= 60;
-    const fastChange = Math.min(deliveryCapacityScore, operationalEvidenceScore) >= 60;
-    recommendation = deepChange
-      ? fastChange
-        ? "revolution"
-        : "evolution"
-      : fastChange
-        ? "reconstruction"
-        : "adaptation";
-  }
+  // The assessment is directional. Missing or apparently inconsistent records lower
+  // confidence, while the known answers still produce a useful route recommendation.
+  const decisionDepth = depthScore ?? 50;
+  const decisionDelivery = deliveryCapacityScore ?? 50;
+  const decisionOperations = operationalEvidenceScore ?? 50;
+  const deepChange = decisionDepth >= 60;
+  const fastChange = Math.min(decisionDelivery, decisionOperations) >= 60;
+  const recommendation: RouteType = deepChange
+    ? fastChange
+      ? "revolution"
+      : "evolution"
+    : fastChange
+      ? "reconstruction"
+      : "adaptation";
 
   let confidence: "low" | "medium" | "high" = "low";
-  if (recommendation !== "evidence-gap" && depthScore !== null && deliveryCapacityScore !== null && operationalEvidenceScore !== null) {
-    const thresholdDistance = Math.min(
-      Math.abs(depthScore - 60),
-      Math.abs(deliveryCapacityScore - 60),
-      Math.abs(operationalEvidenceScore - 60),
-    );
-    confidence =
-      evidenceCompleteness === 100 && thresholdDistance >= 25
-        ? "high"
-        : evidenceCompleteness >= 88 && thresholdDistance >= 10
-          ? "medium"
-          : "low";
-  }
+  const thresholdDistance = Math.min(
+    Math.abs(decisionDepth - 60),
+    Math.abs(decisionDelivery - 60),
+    Math.abs(decisionOperations - 60),
+  );
+  confidence =
+    unknownQuestions.length === 0 && !inconsistentProjectRecord && thresholdDistance >= 25
+      ? "high"
+      : unknownQuestions.length === 0 && !inconsistentProjectRecord && thresholdDistance >= 10
+        ? "medium"
+        : "low";
 
   const riskSignals: RiskSignal[] = [];
-  if (unknownQuestions.length > 0) riskSignals.push("evidence-gap");
+  if (unknownQuestions.length > 0) riskSignals.push("information-gap");
   if (inconsistentProjectRecord) riskSignals.push("inconsistent-project-record");
-  if (inconsistentOperationalRecord) riskSignals.push("inconsistent-operational-record");
   if (noScopeProject && noTimeProject) riskSignals.push("no-delivery-evidence");
   if (
     (selectedScores.productionAiWorkflows ?? 0) > 0 &&
@@ -295,7 +284,7 @@ export function scoreAssessment(answers: AnalyzeRequest["answers"]): AssessmentR
     operationalEvidenceScore,
     evidenceCompleteness,
     confidence,
-    boundaryState: recommendation !== "evidence-gap" && confidence === "low",
+    boundaryState: thresholdDistance < 10,
     riskSignals,
     answerLabels,
     unknownQuestions,

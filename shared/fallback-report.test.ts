@@ -24,17 +24,17 @@ describe("createFallbackReport", () => {
     expect(report.evidence[1]).toContain("范围校正");
   });
 
-  it("creates an evidence collection plan when critical records are unknown", () => {
+  it("creates a route report and notes missing information", () => {
     const result = scoreAssessment({
       ...answers,
       formalMandate: "unknown",
       recentProjectLeadTime: "unknown",
     });
     const report = createFallbackReport(result);
-    expect(result.recommendation).toBe("evidence-gap");
+    expect(result.recommendation).toBe("evolution");
     expect(reportSchema.safeParse(report).success).toBe(true);
-    expect(report.headline).toContain("补齐关键事实");
     expect(report.evidence.join(" ")).toContain("待核实项目");
+    expect(report.risks.join(" ")).toContain("置信度");
   });
 
   it("creates a schema-valid adaptation report from complete low-score records", () => {

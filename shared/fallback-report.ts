@@ -13,9 +13,8 @@ const questionName: Record<QuestionId, string> = {
 };
 
 const riskCopy: Record<RiskSignal, string> = {
-  "evidence-gap": "部分关键事实缺少可核验记录，当前路线判断的证据基础有限。",
-  "inconsistent-project-record": "最近项目的覆盖范围与耗时答案互相冲突，需要核对项目台账。",
-  "inconsistent-operational-record": "有使用前后结果对比的 AI 应用数量超过实际运行数量，需要核对记录。",
+  "information-gap": "部分信息选择了“无法确认或没有记录”，本次路线建议的置信度相应降低。",
+  "inconsistent-project-record": "最近项目的覆盖范围与耗时答案采用了不同项目口径，建议复核；系统仍会结合其他答案给出路线建议。",
   "no-delivery-evidence": "过去 12 个月没有可用于判断跨部门交付能力的已投入使用项目。",
   "measurement-gap": "已有 AI 应用进入真实业务，但拿不出使用前后的业务结果对比，实际价值无法验证。",
   "leadership-gap": "一号位近期缺少形成记录的 AI 决策活动，跨部门争议可能无法及时裁决。",
@@ -25,7 +24,6 @@ const riskCopy: Record<RiskSignal, string> = {
 };
 
 const defaultRisk: Record<RouteType, string> = {
-  "evidence-gap": "缺少事实记录时，管理层容易用立场代替证据作出路线选择。",
   adaptation: "局部优化容易长期停留在工具使用层面，需要设置是否扩大正式授权范围的复盘节点。",
   reconstruction: "快速调整有限范围的流程会压缩协调时间，需要明确冻结范围和业务连续性底线。",
   evolution: "分阶段推进可能因验证周期过长而停滞，需要提前确定扩展、修正和停止条件。",
@@ -38,7 +36,7 @@ function risksFor(result: AssessmentResult): string[] {
 }
 
 function scoreText(score: number | null): string {
-  return score === null ? "证据不足" : `${score} 分`;
+  return score === null ? "暂缺评分" : `${score} 分`;
 }
 
 function evidenceFor(result: AssessmentResult): string[] {
@@ -46,7 +44,7 @@ function evidenceFor(result: AssessmentResult): string[] {
   const evidence = [
     `正式授权为“${answers.formalMandate}”，已生效岗位变化为“${answers.formalRoleChange}”，两项记录共同形成 ${scoreText(result.depthScore)}的变革深度。`,
     `最近项目覆盖“${answers.recentProjectScope}”、实际耗时“${answers.recentProjectLeadTime}”；按项目范围校正后，交付能力为 ${scoreText(result.deliveryCapacityScore)}。`,
-    `真实运行的 AI 应用为“${answers.productionAiWorkflows}”，其中能拿出使用前后结果对比的为“${answers.measuredAiWorkflows}”，结合现有流程材料后，运营证据为 ${scoreText(result.operationalEvidenceScore)}。`,
+    `连续运行的 AI 流程为“${answers.productionAiWorkflows}”，能拿出使用前后结果对比的 AI 应用为“${answers.measuredAiWorkflows}”；结合流程材料后，运营基础为 ${scoreText(result.operationalEvidenceScore)}。`,
     `一号位决策记录为“${answers.leadershipDecisionCount}”，需要与实际使用数量和结果记录覆盖率一起判断治理是否进入稳定节奏。`,
   ];
   if (result.unknownQuestions.length > 0) {
@@ -59,28 +57,6 @@ const routeContent: Record<
   RouteType,
   Pick<DiagnosticReport, "headline" | "actions90Days"> & { summary: (result: AssessmentResult) => string }
 > = {
-  "evidence-gap": {
-    headline: "先补齐关键事实，再选择变革路线",
-    summary: (result) =>
-      `当前可核验信息完整度为 ${result.evidenceCompleteness} 分，关键事实仍不足以支持稳定的路线判断。建议先从现有文件和项目台账补录数据，再进行战略讨论。`,
-    actions90Days: [
-      {
-        phase: "第 1–30 天",
-        objective: "建立最小事实清单",
-        actions: ["收集 AI 相关会议纪要、项目章程、预算文件和岗位制度。", "统一投入使用、应用数量和业务结果的记录方式。"],
-      },
-      {
-        phase: "第 31–60 天",
-        objective: "补齐项目与运营记录",
-        actions: ["从项目台账核对最近跨部门项目的覆盖范围、批准日期和投入使用日期。", "为已经使用的 AI 应用补录使用前后的业务结果。"],
-      },
-      {
-        phase: "第 61–90 天",
-        objective: "用完整证据重新诊断",
-        actions: ["由业务、财务、人力和技术共同确认事实清单。", "重新测评并把证据分歧列入管理层议题。"],
-      },
-    ],
-  },
   adaptation: {
     headline: "以有记录的局部改进积累转型证据",
     summary: (result) =>
