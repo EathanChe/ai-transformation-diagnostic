@@ -29,7 +29,7 @@ npm run dev
 npm run dev:pages
 ```
 
-此命令会先构建，再由 Wrangler 启动 `dist` 与 `functions/`。未配置模型 API 和 Turnstile 时，本地请求会使用规则模板报告并跳过安全验证。
+此命令会先构建，再由 Wrangler 启动 `dist` 与 `functions/`。未配置模型 API 时，本地请求会使用规则模板报告。
 
 ## Cloudflare Pages 部署
 
@@ -38,10 +38,7 @@ npm run dev:pages
 3. Framework preset 选择 Vite，Build command 使用 `npm run build`，Output directory 使用 `dist`。
 4. 配置 Node.js 版本为 20 或更高。
 5. 按 [模型 API 配置](./docs/MODEL_API.md)创建一个 API Key 并添加环境变量。
-6. 在 Cloudflare Turnstile 创建站点：
-   - `TURNSTILE_SECRET_KEY` 以 Secret 形式配置到 Pages Function。
-   - `VITE_TURNSTILE_SITE_KEY` 以普通构建变量配置。
-7. 重新部署并完成移动端、桌面端和中国大陆网络实测。
+6. 重新部署并完成移动端、桌面端和中国大陆网络实测。
 
 Cloudflare 会提供免费的 `*.pages.dev` 域名。项目未使用数据库，不保存答案、自由文本或报告。
 
@@ -58,8 +55,8 @@ npm run test:e2e    # Playwright 端到端测试
 
 - 模型 API Key 仅存在 Cloudflare 加密变量中。
 - 服务端忽略客户端分值，只接收选项 ID 并重新评分。
-- 接口启用 Turnstile、单实例短时限流、请求结构校验和 25 秒 AI 超时。
-- HTTP 响应使用 `no-store`，浏览器只连接同源分析接口及 Turnstile 域名。
+- 接口启用单实例短时限流、请求结构校验和 25 秒 AI 超时。
+- HTTP 响应使用 `no-store`，浏览器只连接同源分析接口。
 - 代码不记录答案、补充描述或模型输出。
 
 ## 项目入口

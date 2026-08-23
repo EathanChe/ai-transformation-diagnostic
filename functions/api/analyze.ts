@@ -11,11 +11,6 @@ type Env = {
   LLM_API_KEY?: string;
   LLM_BASE_URL?: string;
   LLM_MODEL?: string;
-  TURNSTILE_SECRET_KEY?: string;
-};
-
-type TurnstileResponse = {
-  success?: boolean;
 };
 
 type ChatCompletionResponse = {
@@ -87,32 +82,6 @@ export function isRateLimited(key: string, now = Date.now()): boolean {
 
 export function resetRateLimitsForTests(): void {
   rateEntries.clear();
-}
-
-async function verifyTurnstile(
-  token: string,
-  secret: string | undefined,
-  remoteIp: string,
-): Promise<boolean> {
-  if (!secret) return true;
-  if (!token) return false;
-
-  const body = new FormData();
-  body.set("secret", secret);
-  body.set("response", token);
-  if (remoteIp !== "local") body.set("remoteip", remoteIp);
-
-  try {
-    const response = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
-      method: "POST",
-      body,
-    });
-    if (!response.ok) return false;
-    const result = (await response.json()) as TurnstileResponse;
-    return result.success === true;
-  } catch {
-    return false;
-  }
 }
 
 function stripCodeFence(value: string): string {
@@ -242,19 +211,6 @@ export async function handleAnalyzeRequest(request: Request, env: Env): Promise<
     return json({ code: "INVALID_REQUEST", message: "请完成所有必答题后再提交。" }, 400);
   }
 
-  const turnstileValid = await verifyTurnstile(
-    parsed.data.turnstileToken,
-    env.TURNSTILE_SECRET_KEY,
-    clientAddress,
-  );
-  if (!turnstileValid) {
-    return json({ code: "TURNSTILE_FAILED", message: "安全验证未完成，请点击“重新分析”再试。" }, 403);
-  }
-
-  if (isRateLimited(clientAddress)) {
-    return json({ code: "RATE_LIMITED", message: "提交次数较多，请一分钟后再试。" }, 429);
-  }
-
   let assessment: AssessmentResult;
   try {
     assessment = scoreAssessment(parsed.data.answers);
@@ -263,6 +219,10 @@ export async function handleAnalyzeRequest(request: Request, env: Env): Promise<
       return json({ code: "INVALID_OPTION", message: "答案选项无效，请返回检查。" }, 400);
     }
     return json({ code: "SCORING_ERROR", message: "评分暂时无法完成，请稍后重试。" }, 500);
+  }
+
+  if (isRateLimited(clientAddress)) {
+    return json({ code: "RATE_LIMITED", message: "提交次数较多，请一分钟后再试。" }, 429);
   }
 
   let report: DiagnosticReport;

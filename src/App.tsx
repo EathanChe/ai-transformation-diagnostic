@@ -16,7 +16,6 @@ import { questions } from "../shared/assessment";
 import { analyzeResponseSchema, type AnalyzeResponse, type QuestionId } from "../shared/types";
 import { ResultView } from "./components/ResultView";
 import { StrategyMatrix } from "./components/StrategyMatrix";
-import { getTurnstileToken } from "./lib/turnstile";
 
 type Screen = "intro" | "questionnaire" | "loading" | "result" | "error";
 type AssessmentForm = {
@@ -174,7 +173,6 @@ export default function App() {
     setErrorMessage("");
 
     try {
-      const turnstileToken = await getTurnstileToken();
       const values = getValues();
       const response = await fetch("/api/analyze", {
         method: "POST",
@@ -183,7 +181,7 @@ export default function App() {
           assessmentVersion: "3.2",
           answers: values.answers,
           context: values.context.trim() || undefined,
-          turnstileToken,
+          turnstileToken: "",
         }),
       });
 
